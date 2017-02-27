@@ -8,6 +8,10 @@ What things you need to have to be able to run:
 * Unreal Engine - v4.15+
 * Some C++ compiler and IDE (Visual Studio 2015+ recommended)
 
+## Notes
+
+This is a code for learning how to program on the unreal engine, do not expect anything more than some blocks shooting spheres at other blocks while they explode with an explosion I made in 2 min all of this merged with the sound effects made by me trying to mimic explosion sounds with my mouth using a $5 dollar mic. 
+
 ## Authors
 
 * **Lucas 'Subli' Ferreira** - *Every line so far.* - [lucas.subli@gmail.com](mailto:lucas.subli@gmail.com)
