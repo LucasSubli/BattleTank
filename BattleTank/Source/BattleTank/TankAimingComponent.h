@@ -5,12 +5,20 @@
 #include "Components/ActorComponent.h"
 #include "TankAimingComponent.generated.h"
 
+// enum for firing state
+UENUM()
+enum class EFiringState : uint8 {
+	Reloading,
+	Aiming,
+	Locked
+};
 
+// forward declaration
 class UTankBarrel;
 class UTankTurret;
 
 
-UCLASS(meta=(BlueprintSpawnableComponent), ClassGroup = (Custom))
+UCLASS( meta = (BlueprintSpawnableComponent), ClassGroup = (Custom) )
 class BATTLETANK_API UTankAimingComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -32,6 +40,9 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Firing")
+	EFiringState FiringState = EFiringState::Reloading;
+
 private:
 
 	UTankBarrel* Barrel = nullptr;
@@ -39,5 +50,6 @@ private:
 	UTankTurret* Turret = nullptr;
 
 	void MoveBarrelTowards(FVector AimDirection);
+
 
 };

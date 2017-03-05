@@ -23,6 +23,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+	ATank* GetControlledTank() const;
 
 	virtual void BeginPlay() override;
 
@@ -34,8 +36,6 @@ private:
 	bool GetLookDirection(FVector2D ScreenLocation, FVector &LookDirection) const;
 
 	bool GetLookVectorHitLocation(FVector LookDirection, FVector &HitLocation) const;
-
-	ATank* GetControlledTank() const;
 
 	UPROPERTY(EditDefaultsOnly)
 	float CrosshairXLocation = 0.5;
