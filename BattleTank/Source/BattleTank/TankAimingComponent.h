@@ -41,11 +41,13 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Firing")
-	EFiringState FiringState = EFiringState::Aiming;
+	EFiringState FiringState = EFiringState::Reloading;
 
 private:
 
 	void MoveBarrelTowards(FVector AimDirection);
+
+	bool IsBarrelMoving();
 
 	// Sets default values for this component's properties
 	UTankAimingComponent();
@@ -63,4 +65,6 @@ private:
 	float ReloadTimeInSeconds = 3;
 
 	double LastFireTime = 0;
+
+	FVector AimDirection = FVector(0);
 };
