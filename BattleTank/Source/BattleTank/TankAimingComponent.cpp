@@ -41,7 +41,9 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if ((FPlatformTime::Seconds() - LastFireTime) < ReloadTimeInSeconds) {
+	if (RoundsLeft <= 0) {
+		FiringState = EFiringState::OutOfAmmo;
+	} else if ((FPlatformTime::Seconds() - LastFireTime) < ReloadTimeInSeconds) {
 		FiringState = EFiringState::Reloading;
 	} else if (IsBarrelMoving()) {
 		FiringState = EFiringState::Aiming;
@@ -50,6 +52,14 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	}
 
 	// ...
+}
+
+EFiringState UTankAimingComponent::GetFiringState() const {
+	return FiringState;
+}
+
+int UTankAimingComponent::GetRoundsLeft() const {
+	return RoundsLeft;
 }
 
 void UTankAimingComponent::AimAt(FVector HitLocation) {
@@ -76,17 +86,23 @@ void UTankAimingComponent::AimAt(FVector HitLocation) {
 	}
 }
 
-void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection) {
+void UTankAimingComponent::MoveBarrelTowards(FVector AimDirectionParam) {
 
 	if (!ensure(Barrel && Turret)) { return; }
 
 	auto BarrelRotator = Barrel->GetForwardVector().Rotation();
-	auto AimAsRotator = AimDirection.Rotation();
+	auto AimAsRotator = AimDirectionParam.Rotation();
 
 	auto DeltaRotator = AimAsRotator - BarrelRotator;
 
 	Barrel->Elevate(DeltaRotator.Pitch);
-	Turret->Rotate(DeltaRotator.Yaw);
+
+	// always yaw the shortest way
+	if (FMath::Abs(DeltaRotator.Yaw) < 180) {
+		Turret->Rotate(DeltaRotator.Yaw);
+	} else {
+		Turret->Rotate(-DeltaRotator.Yaw);
+	}
 
 }
 
@@ -104,7 +120,7 @@ bool UTankAimingComponent::IsBarrelMoving() {
 void UTankAimingComponent::Fire() {
 
 
-	if (FiringState != EFiringState::Reloading) {
+	if (FiringState == EFiringState::Locked || FiringState == EFiringState::Aiming) {
 
 		if (!ensure(Barrel && ProjectileBlueprint)) { return; }
 
@@ -116,5 +132,6 @@ void UTankAimingComponent::Fire() {
 
 		Projectile->LaunchProjectile(LaunchSpeed);
 		LastFireTime = FPlatformTime::Seconds();
+		RoundsLeft--;
 	}
 }
