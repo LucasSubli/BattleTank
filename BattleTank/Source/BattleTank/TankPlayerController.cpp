@@ -2,6 +2,7 @@
 
 #include "BattleTank.h"
 #include "TankAimingComponent.h"
+#include "Tank.h"
 #include "TankPlayerController.h"
 
 
@@ -12,6 +13,18 @@ void ATankPlayerController::BeginPlay() {
 	
 	if (ensure(AimingComponent)) {
 		FoundAimingComponent(AimingComponent);
+	}
+}
+
+
+void ATankPlayerController::SetPawn(APawn* InPawn) {
+	Super::SetPawn(InPawn);
+	if (InPawn) {
+		auto PossessedTank = Cast<ATank>(InPawn);
+		if (!ensure(PossessedTank)) { return; }
+			
+		// Subscribe our local method to the tank's death event
+		PossessedTank->OnDeath.AddUniqueDynamic(this, &ATankPlayerController::OnPossedTankDeath);
 	}
 }
 
@@ -86,6 +99,20 @@ bool ATankPlayerController::GetLookVectorHitLocation(FVector LookDirection, FVec
 	}
 	HitLocation = FVector(0);
 	return false;
+}
 
+
+void ATankPlayerController::OnPossedTankDeath() {
 	
+	/*auto StaticMesh = GetPawn()->FindComponentByClass<UStaticMeshComponent>();
+
+	TArray<USceneComponent*> Children;
+
+	StaticMesh->GetChildrenComponents(true, Children);
+
+	for (auto* c : Children) {
+		c->DestroyComponent();
+	}
+	StaticMesh->DestroyComponent();*/
+	StartSpectatingOnly();
 }

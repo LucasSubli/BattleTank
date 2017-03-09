@@ -20,6 +20,9 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
+	void OnPossedTankDeath();
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -28,6 +31,8 @@ protected:
 	void FoundAimingComponent(UTankAimingComponent* AimCompRef);
 
 private:
+	void SetPawn(APawn * InPawn);
+
 	void AimTowardsCrosshair();
 
 	bool GetSightRayHitLocation(FVector &HitLocation) const;
